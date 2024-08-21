@@ -4,7 +4,7 @@ from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
 from rest_framework.routers import DefaultRouter
 
 from api.v1.views.course_view import CourseViewSet, GroupViewSet, LessonViewSet
-from api.v1.views.user_view import UserViewSet
+from api.v1.views.user_view import BalanceViewSet, UserViewSet
 
 v1_router = DefaultRouter()
 v1_router.register('users', UserViewSet, basename='users')
@@ -20,6 +20,8 @@ urlpatterns = [
     path("", include(v1_router.urls)),
     path("auth/", include('djoser.urls')),
     path("auth/", include('djoser.urls.authtoken')),
+    path('balances/', BalanceViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('balances/<int:pk>/', BalanceViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
     # Создание нового пользователя api/v1/auth/users/
     # Авторизация пользователя     api/v1/auth/token/login/
 ]

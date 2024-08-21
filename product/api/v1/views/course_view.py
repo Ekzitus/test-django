@@ -56,8 +56,10 @@ class GroupViewSet(viewsets.ModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     """Курсы """
 
-    queryset = Course.objects.all()
     permission_classes = (ReadOnlyOrIsAdmin,)
+
+    def get_queryset(self):
+        return Course.objects.exclude(id__in=self.request.user.subscription_set.values_list('course', flat=True))
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
@@ -72,7 +74,16 @@ class CourseViewSet(viewsets.ModelViewSet):
     def pay(self, request, pk):
         """Покупка доступа к курсу (подписка на курс)."""
 
-        # TODO
+        course = Course.objects.get(id=pk)
+        cost = course.cost
+        if request.user.balance.bonuses >= cost:
+            request.user.balance.bonuses -= cost
+            request.user.balance.save()
+            request.user.subscription_set.create(course=course)
+            data = SubscriptionSerializer(instance=request.user.subscription_set.last()).data
+        else:
+            data = {"error": "Недостаточно средств"}
+
 
         return Response(
             data=data,

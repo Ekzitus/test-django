@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
         max_length=250,
         unique=True
     )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = (
         'username',
@@ -20,7 +21,11 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('-id',)
+        ordering = ('-id',)                                                        
+
+    def create_balance(sender, instance, created, **kwargs):
+        if created:
+            Balance.objects.create(user=instance)
 
     def __str__(self):
         return self.get_full_name()
@@ -29,7 +34,11 @@ class CustomUser(AbstractUser):
 class Balance(models.Model):
     """Модель баланса пользователя."""
 
-    # TODO
+    user = models.OneToOneField(
+        'CustomUser',
+        on_delete=models.CASCADE,
+    )
+    bonuses = models.PositiveIntegerField(verbose_name='Бонусы', default=1000)
 
     class Meta:
         verbose_name = 'Баланс'
@@ -39,8 +48,8 @@ class Balance(models.Model):
 
 class Subscription(models.Model):
     """Модель подписки пользователя на курс."""
-
-    # TODO
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Подписка'

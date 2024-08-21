@@ -18,7 +18,9 @@ class Course(models.Model):
         verbose_name='Дата и время начала курса'
     )
 
-    # TODO
+    cost = models.IntegerField(
+        verbose_name='Стоимость курса',
+    )
 
     class Meta:
         verbose_name = 'Курс'
@@ -41,7 +43,10 @@ class Lesson(models.Model):
         verbose_name='Ссылка',
     )
 
-    # TODO
+    course = models.ForeignKey(
+        Course, 
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = 'Урок'
@@ -55,7 +60,10 @@ class Lesson(models.Model):
 class Group(models.Model):
     """Модель группы."""
 
-    # TODO
+    users = models.ManyToManyField(
+        'users.CustomUser',
+        verbose_name='Пользователи',
+    )
 
     class Meta:
         verbose_name = 'Группа'
