@@ -23,10 +23,6 @@ class CustomUser(AbstractUser):
         verbose_name_plural = 'Пользователи'
         ordering = ('-id',)                                                        
 
-    def create_balance(sender, instance, created, **kwargs):
-        if created:
-            Balance.objects.create(user=instance)
-
     def __str__(self):
         return self.get_full_name()
 

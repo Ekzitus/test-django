@@ -59,7 +59,7 @@ class Lesson(models.Model):
 
 class Group(models.Model):
     """Модель группы."""
-
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
     users = models.ManyToManyField(
         'users.CustomUser',
         verbose_name='Пользователи',
